@@ -15,10 +15,12 @@ echo "S3_URL: $MLFLOW_S3_ENDPOINT_URL"
 echo "MLFLOW_BUCKET: $MLFLOW_BUCKET"
 echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
 echo "AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY"
+echo "TLS: $MLFLOW_TRACKING_INSECURE_TLS"
 echo "------------------------------------"
 
 # Run mlflow server with necessary environment variables
 mlflow server \
+  --app-name basic-auth \
   --backend-store-uri "postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_URL}/${POSTGRES_DB}" \
   --host "0.0.0.0" \
   --port "5000" \
