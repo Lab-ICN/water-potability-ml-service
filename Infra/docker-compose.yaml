@@ -14,6 +14,7 @@ services:
     volumes:
       - minio_data:/data
       - ./prebucket.sh:/usr/local/bin/prebucket.sh
+      - ./certs:/root/.minio/certs
     entrypoint: /usr/local/bin/prebucket.sh
     healthcheck:
       test: ["CMD", "curl", "-f", "https://localhost:443/minio/health/live"]
