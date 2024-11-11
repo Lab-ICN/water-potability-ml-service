@@ -14,6 +14,7 @@ services:
     volumes:
       - minio_data:/data
       - ./prebucket.sh:/usr/local/bin/prebucket.sh
+      - ./certs:/root/.minio/certs
     entrypoint: /usr/local/bin/prebucket.sh
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:443/minio/health/live"]
@@ -73,8 +74,10 @@ services:
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - MLFLOW_BUCKET=${MLFLOW_BUCKET}
+      - MLFLOW_TRACKING_SERVER_CERT_PATH="/mlflow/certs"
     volumes:
       - ./volumes/mlruns:/mlflow/mlruns
+      - ./certs:/mlflow/certs/CA
     depends_on:
       - s3
       - db
