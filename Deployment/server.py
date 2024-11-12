@@ -9,6 +9,9 @@ from dotenv import load_dotenv
 import os
 import mlflow.pyfunc
 import numpy as np
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 load_dotenv()
 os.environ["MLFLOW_TRACKING_USERNAME"] = os.getenv("MLFLOW_ADMIN_USERNAME")
@@ -25,29 +28,30 @@ current_version = None
 
 
 def load_latest_model():
+    """Loads the latest model version if it's not already loaded."""
     global model, current_version
-    # Fetch the latest version of the model
-    latest_version_info = client.get_latest_versions(name=model_name, stages=["None"])
-    if latest_version_info:
-        latest_version = latest_version_info[0].version
-        if current_version != latest_version:
-            # Update the model if there's a newer version
-            model = mlflow.pyfunc.load_model(
-                model_uri=f"models:/{model_name}/{latest_version}"
-            )
-            current_version = latest_version
-            print(f"Loaded model version {latest_version}")
+    try:
+        # Fetch the latest version info
+        latest_version_info = client.search_model_versions(f"name='{model_name}'")
+        
+        if latest_version_info:
+            latest_version = max(int(version.version) for version in latest_version_info)
+            
+            if current_version != latest_version:
+                # Update the model if there's a newer version
+                model = mlflow.pyfunc.load_model(
+                    model_uri=f"models:/{model_name}/{latest_version}"
+                )
+                current_version = latest_version
+                print(f"Loaded model version {latest_version}")
+    except Exception as e:
+        print(f"Failed to load model: {e}")
 
 
 load_latest_model()
 
 
 class WaterPotabilityService(pb2_grpc.WaterPotabilityServiceServicer):
-    #  def PredictWaterPotability(self, request, context) :
-    #     error_response = pb2.Error(message="No error", code="0")
-    #     # response = {'prediction' : 5.3, 'level' : '2', 'error' : error_response}
-
-    #     return pb2.PredictWaterPotabilityResponse(**response)
     def PredictWaterPotability(self, request, context):
         error_response = pb2.Error(message="No error", code="0")
         print(request)

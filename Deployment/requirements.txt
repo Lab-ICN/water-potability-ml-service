@@ -1,5 +1,5 @@
-grpc
 grpcio
 grpcio-tools
-mlflow
 python-dotenv
+mlflow
+boto3
