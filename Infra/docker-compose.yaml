@@ -21,6 +21,8 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+    networks:
+      - water-potability
 
   db:
     restart: always
@@ -39,6 +41,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 3
+    networks:
+      - water-potability
 
   dbadmin:
     restart: always
@@ -55,6 +59,8 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+    networks:
+      - water-potability
 
   tracker:
     restart: always
@@ -87,6 +93,13 @@ services:
       interval: 30s
       retries: 3
       start_period: 10s
+    networks:
+      - water-potability
 
 volumes:
   minio_data:
+
+networks:
+  water-potability:
+    driver: bridge
+    external: true 

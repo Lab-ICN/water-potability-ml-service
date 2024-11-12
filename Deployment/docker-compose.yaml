@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: my_app_container
+    container_name: service
     ports:
       - "50051:50051"
     environment:
@@ -13,4 +13,16 @@ services:
       MLFLOW_S3_IGNORE_TLS: "true"
     volumes:
       - .:/app
-    command: ["python", "server.py"]
+    healthcheck:
+      test: ["CMD", "pgrep", "-f", "server.py"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - water-potability
+
+networks:
+  water-potability:
+    name: water-potability
+
