@@ -24,11 +24,11 @@ On the server side, you'll need to configure environment variables for MinIO, Po
 
 ```plaintext
 # MinIO Configuration
-MINIO_ROOT_USER=your_minio_root_user          # Replace with your MinIO root user (e.g., admin)
-MINIO_ROOT_PASSWORD=your_minio_root_password  # Replace with your MinIO root password (e.g., password)
-AWS_ACCESS_KEY_ID=your_aws_access_key         # Same as MINIO_ROOT_USER (for compatibility)
-AWS_SECRET_ACCESS_KEY=your_aws_secret_key     # Same as MINIO_ROOT_PASSWORD (for compatibility)
-S3_URL=http://s3:443                          # The MinIO endpoint URL; adjust to your setup
+MINIO_ROOT_USER=your_minio_root_user          # Set your MinIO root user (e.g., admin)
+MINIO_ROOT_PASSWORD=your_minio_root_password  # Set your MinIO root password (e.g., password)
+AWS_ACCESS_KEY_ID=your_aws_access_key         # Typically same as MINIO_ROOT_USER
+AWS_SECRET_ACCESS_KEY=your_aws_secret_key     # Typically same as MINIO_ROOT_PASSWORD
+S3_URL=http://s3:443                          # Set the MinIO endpoint URL
 MLFLOW_BUCKET=your_mlflow_bucket              # S3 bucket for MLflow artifacts (e.g., mlflow)
 DATASET_BUCKET=your_dataset_bucket            # S3 bucket for dataset storage (e.g., dataset)
 
@@ -60,6 +60,8 @@ MLFLOW_S3_ENDPOINT_URL=your_mlflow_s3_endpoint_url # Endpoint URL for MinIO (e.g
 AWS_ACCESS_KEY_ID=your_aws_access_key              # Must match MINIO_ROOT_USER
 AWS_SECRET_ACCESS_KEY=your_aws_secret_key          # Must match MINIO_ROOT_PASSWORD
 MLFLOW_URL=your_mlflow_url                         # MLflow tracking server URL (same as above)
+MLFLOW_ADMIN_USERNAME=your_mlflow_admin_username   # MLflow admin username in server
+MLFLOW_ADMIN_PASSWORD=your_mlflow_admin_password   # MLflow admin password in server
 ```
 
 ### Instructions
