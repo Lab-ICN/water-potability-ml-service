@@ -1,0 +1,16 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: my_app_container
+    ports:
+      - "50051:50051"
+    environment:
+      MLFLOW_TRACKING_USERNAME: ${MLFLOW_TRACKING_USERNAME}
+      MLFLOW_TRACKING_PASSWORD: ${MLFLOW_TRACKING_PASSWORD}
+      MLFLOW_TRACKING_URI: ${MLFLOW_TRACKING_URI}
+      MLFLOW_S3_IGNORE_TLS: "true"
+    volumes:
+      - .:/app
+    command: ["python", "server.py"]
