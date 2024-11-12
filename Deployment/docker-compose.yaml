@@ -24,5 +24,4 @@ services:
 
 networks:
   water-potability:
-    name: water-potability
 

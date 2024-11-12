@@ -101,5 +101,3 @@ volumes:
 
 networks:
   water-potability:
-    driver: bridge
-    external: true 
