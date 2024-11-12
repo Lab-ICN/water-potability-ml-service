@@ -1,23 +1,19 @@
 syntax = "proto3";
 package  water_potability;
-option go_package = "./internal/water_potability/handler/rpc/pb";
-
 
 service WaterPotabilityService {
   rpc PredictWaterPotability (PredictWaterPotabilityRequest) returns (PredictWaterPotabilityResponse);
 }
 
 message PredictWaterPotabilityRequest {
-  string id = 1;
-  double ph = 2;
-  double totalDissolveSolids = 3;
-  double turbidity = 4;  
+  double ph = 1;
+  double totalDissolveSolids = 2;
+  double turbidity = 3;  
 }
 
 message PredictWaterPotabilityResponse {
   double prediction = 1;
-  string level = 2;
-  Error error = 3;
+  Error error = 2;
 }
 
 message Error {

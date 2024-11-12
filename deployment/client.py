@@ -16,10 +16,7 @@ class WaterClient(object) :
     
     def predict(self) :
         this_message = pb2.PredictWaterPotabilityRequest(
-            id = '1',
-            ph = 2,
-            totalDissolveSolids = 3,
-            turbidity = 4
+            [1,1,1,1,1,1,1,1,1]
             )
         return self.stub.PredictWaterPotability(this_message)
     
