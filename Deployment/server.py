@@ -8,8 +8,10 @@ from mlflow import MlflowClient
 from dotenv import load_dotenv
 import os
 import mlflow.pyfunc
+import pandas as pd
 import numpy as np
 import urllib3
+
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -21,8 +23,6 @@ os.environ["MLFLOW_S3_IGNORE_TLS"] = "true"
 
 model_name = "ml_water_potability"
 client = MlflowClient()
-
-# Global model variable
 model = None
 current_version = None
 
@@ -31,14 +31,14 @@ def load_latest_model():
     """Loads the latest model version if it's not already loaded."""
     global model, current_version
     try:
-        # Fetch the latest version info
+
         latest_version_info = client.search_model_versions(f"name='{model_name}'")
         
         if latest_version_info:
             latest_version = max(int(version.version) for version in latest_version_info)
             
             if current_version != latest_version:
-                # Update the model if there's a newer version
+
                 model = mlflow.pyfunc.load_model(
                     model_uri=f"models:/{model_name}/{latest_version}"
                 )
@@ -50,16 +50,39 @@ def load_latest_model():
 
 load_latest_model()
 
-
 class WaterPotabilityService(pb2_grpc.WaterPotabilityServiceServicer):
     def PredictWaterPotability(self, request, context):
         error_response = pb2.Error(message="No error", code="0")
-        print(request)
-        print(request.ph)
-        bahan = np.array([[request.ph, request.totalDissolveSolids]])
-        prediction = model.predict(bahan)[0]
-        response = {"prediction": prediction, "error": error_response}
-        return pb2.PredictWaterPotabilityResponse(**response)
+        
+        data_dict = {
+            "ph": request.ph if request.ph else np.nan,
+            "Hardness": request.hardness if hasattr(request, "hardness") else np.nan,
+            "Solids": request.totalDissolveSolids if request.totalDissolveSolids else np.nan,
+            "Chloramines": request.chloramines if hasattr(request, "chloramines") else np.nan,
+            "Sulfate": request.sulfate if hasattr(request, "sulfate") else np.nan,
+            "Conductivity": request.conductivity if hasattr(request, "conductivity") else np.nan,
+            "Organic_carbon": request.organicCarbon if hasattr(request, "organicCarbon") else np.nan,
+            "Trihalomethanes": request.trihalomethanes if hasattr(request, "trihalomethanes") else np.nan,
+            "Turbidity": request.turbidity if request.turbidity else np.nan
+        }
+        
+        data = pd.DataFrame([data_dict])
+        
+        if model is None:
+            error_response.message = "Model not loaded"
+            error_response.code = "1"
+            return pb2.PredictWaterPotabilityResponse(prediction=-1, error=error_response)
+        
+        try:
+            prediction = model.predict(data)[0]
+            response = {"prediction": prediction, "error": error_response}
+            return pb2.PredictWaterPotabilityResponse(**response)
+        except Exception as e:
+            print(f"Prediction error: {e}")
+            error_response.message = str(e)
+            error_response.code = "1"
+            return pb2.PredictWaterPotabilityResponse(prediction=-1, error=error_response)
+
 
 
 def poll_for_new_model():
