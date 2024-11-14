@@ -1,0 +1,9 @@
+[core]
+    remote = water
+    autostage = true
+['remote "water"']
+    url = s3://dataset
+    ssl_verify = false
+    endpointurl = https://10.34.4.198:443
+    access_key_id = admin
+    secret_access_key = password
