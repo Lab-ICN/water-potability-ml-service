@@ -4,3 +4,4 @@ python-dotenv
 mlflow
 sklearn
 boto3
+pynvml

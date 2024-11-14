@@ -71,7 +71,6 @@ class WaterPotabilityService(pb2_grpc.WaterPotabilityServiceServicer):
         }
         
         data = {key: data_dict[key] for key in expected_features if key in data_dict}
-        print("Filtered data:", data)
         
         if model is None:
             error_response.message = "Model not loaded"
