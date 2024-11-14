@@ -25,11 +25,13 @@ model_name = "ml_water_potability"
 client = MlflowClient()
 model = None
 current_version = None
+expected_features = None
+
 
 
 def load_latest_model():
     """Loads the latest model version if it's not already loaded."""
-    global model, current_version
+    global model, current_version, expected_features
     try:
 
         latest_version_info = client.search_model_versions(f"name='{model_name}'")
@@ -43,7 +45,9 @@ def load_latest_model():
                     model_uri=f"models:/{model_name}/{latest_version}"
                 )
                 current_version = latest_version
+                expected_features = [input_spec.name for input_spec in model.metadata.signature.inputs]
                 print(f"Loaded model version {latest_version}")
+                print(f"Expected features: {expected_features}")
     except Exception as e:
         print(f"Failed to load model: {e}")
 
@@ -66,7 +70,7 @@ class WaterPotabilityService(pb2_grpc.WaterPotabilityServiceServicer):
             "Turbidity": request.turbidity if request.turbidity else np.nan
         }
         
-        data = pd.DataFrame([data_dict])
+        data = {key: data_dict[key] for key in expected_features if key in data_dict}
         
         if model is None:
             error_response.message = "Model not loaded"
