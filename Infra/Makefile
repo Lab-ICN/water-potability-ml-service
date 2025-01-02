@@ -15,9 +15,9 @@ endif
 
 # Define the Docker Compose command based on availability
 ifeq ($(shell command -v docker compose > /dev/null 2>&1 && echo found),found)
-    DOCKER_CMD = docker compose
+    DOCKER_CMD := docker compose
 else ifeq ($(shell command -v docker-compose > /dev/null 2>&1 && echo found),found)
-    DOCKER_CMD = docker-compose
+    DOCKER_CMD := docker-compose
 else
     $(error Neither "docker compose" nor "docker-compose" is available on your system. Please install Docker Compose.)
 endif
@@ -26,11 +26,12 @@ endif
 ifneq (,$(findstring Linux,$(OS)))
     ifneq (,$(shell groups | grep docker))
         # If the user is in the docker group, no need for sudo
-        DOCKER_CMD = $(DOCKER_CMD)
+        DOCKER_CMD := $(DOCKER_CMD)
     else
-        DOCKER_CMD = sudo $(DOCKER_CMD)
+        DOCKER_CMD := sudo $(DOCKER_CMD)
     endif
 endif
+
 
 # Default target if you type just `make`
 .DEFAULT_GOAL := run
