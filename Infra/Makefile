@@ -40,7 +40,7 @@ endif
 ## network: Create the mlops network if not exists
 network:
 	@echo "Creating 'mlops' network if it doesn't exist..."
-	-docker network create mlops
+	-docker network create water-potability
 
 ## certs: Generate certificates using the appropriate script
 certs:
@@ -48,7 +48,7 @@ certs:
 	cd certs && ./$(CERTGEN_SCRIPT) --host "localhost,minio-*"
 
 ## run: Create the network first, then run docker compose
-run: certs
+run: certs network
 	@echo "Running '$(DOCKER_CMD) up -d --build'..."
 	$(DOCKER_CMD) up -d --build
 
