@@ -7,8 +7,8 @@ services:
       - "443:443"
       - "9001:80"
     environment:
-      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
-      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - MINIO_ROOT_USER=${AWS_ACCESS_KEY_ID}
+      - MINIO_ROOT_PASSWORD=${AWS_SECRET_ACCESS_KEY}
       - MINIO_STORAGE_USE_HTTPS=True
       - MLFLOW_TRACKING_INSECURE_TLS=False
     volumes:
@@ -17,7 +17,7 @@ services:
       - ./certs:/root/.minio/certs
     entrypoint: /usr/local/bin/prebucket.sh
     healthcheck:
-      test: ["CMD", "curl", "-f", "https://localhost:443/minio/health/live"]
+      test: ["CMD", "curl", "--insecure", "https://localhost:443/minio/health/live"]
       interval: 30s
       timeout: 20s
       retries: 3
@@ -26,21 +26,22 @@ services:
 
   db:
     restart: always
-    image: postgres:13
+    image: postgres
     container_name: postgres
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=mlflow
+      - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - ./volumes/postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
     healthcheck:
       test: ["CMD", "pg_isready", "-p", "5432", "-U", "${POSTGRES_USER}"]
-      interval: 5s
-      timeout: 5s
-      retries: 3
+      interval: 10s
+      timeout: 10s
+      retries: 10
     networks:
       - water-potability
 
@@ -54,7 +55,7 @@ services:
     ports:
       - "8080:80"
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:80"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8080"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -63,13 +64,14 @@ services:
       - water-potability
 
   tracker:
-    restart: always
     build:
       context: .
       dockerfile: Dockerfile.mlflow
     container_name: mlflow
     ports:
-      - "5000:5000"
+      - "80:5000"
+    env_file:
+      - .env
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -82,14 +84,16 @@ services:
       - MLFLOW_TRACKING_USERNAME=${MLFLOW_ADMIN_USERNAME}
       - MLFLOW_TRACKING_PASSWORD=${MLFLOW_ADMIN_PASSWORD}
       - MLFLOW_S3_IGNORE_TLS=true
+      - MLFLOW_AUTH_CONFIG_PATH=/root/mlflow/auth/basic_auth.ini
     volumes:
       - ./volumes/mlruns:/mlflow/mlruns
       - ./certs:/root/certs
+      - ./ini_script.py:/root/mlflow/auth/ini_script.py
     depends_on:
       - s3
       - db
     healthcheck:
-      test: ["CMD", "curl", "-f", "https://localhost:5001"]
+      test: ["CMD", "curl", "-f", "https://localhost:5000"]
       interval: 30s
       retries: 3
       start_period: 10s

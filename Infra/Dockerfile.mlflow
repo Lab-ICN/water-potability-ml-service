@@ -2,7 +2,9 @@
 FROM python:3.10
 
 # Install necessary Python packages only once during image build
-RUN pip install mlflow psycopg2-binary boto3 flask-migrate pynvml
+# Install necessary Python packages only once during image build
+RUN pip install --upgrade pip
+RUN pip install mlflow psycopg2-binary boto3 flask-migrate pynvml google-cloud-storage flask-migrate psutil pynvml
 
 # Set working directory
 WORKDIR /app

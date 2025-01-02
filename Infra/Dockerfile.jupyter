@@ -1,0 +1,6 @@
+FROM jupyter/minimal-notebook
+
+RUN mkdir -p /home/jovyan/notebooks
+# Copy requirements.txt and install dependencies
+COPY ./requirements.txt /home/jovyan/notebooks/requirements.txt
+RUN pip install -r /home/jovyan/notebooks/requirements.txt
