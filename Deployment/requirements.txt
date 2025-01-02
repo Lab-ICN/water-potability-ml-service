@@ -3,3 +3,6 @@ grpcio-tools
 python-dotenv
 mlflow
 boto3
+xgboost
+scikit-learn
+psutil
