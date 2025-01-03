@@ -4,5 +4,5 @@ python-dotenv
 mlflow
 boto3
 xgboost
-scikit-learn
+scikit-learn==1.2.2
 psutil
