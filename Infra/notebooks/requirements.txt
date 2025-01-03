@@ -1,0 +1,6 @@
+mlflow
+scikit-learn
+xgboost
+boto3
+python-dotenv
+scikit-learn

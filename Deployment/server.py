@@ -41,13 +41,13 @@ def load_latest_model():
     """Loads the latest model version if it's not already loaded."""
     global model, current_version, expected_features
     try:
-        logging.info("Loading the latest model...")
         latest_version_info = client.search_model_versions(f"name='{model_name}'")
         
         if latest_version_info:
             latest_version = max(int(version.version) for version in latest_version_info)
             
             if current_version != latest_version:
+                logging.info("Loading the latest model...")
 
                 model = mlflow.pyfunc.load_model(
                     model_uri=f"models:/{model_name}/{latest_version}"
@@ -110,7 +110,6 @@ class WaterPotabilityService(pb2_grpc.WaterPotabilityServiceServicer):
 def poll_for_new_model():
     while True:
         try:
-            logging.info("Polling for new model updates...")
             load_latest_model()
         except Exception as e:
             logging.error(f"Error reloading model: {e}")

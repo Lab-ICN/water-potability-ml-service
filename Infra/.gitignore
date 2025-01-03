@@ -166,3 +166,4 @@ volumes/*
 certs/*
 !certs/certgen
 mlruns/*
+*/mlruns/*
