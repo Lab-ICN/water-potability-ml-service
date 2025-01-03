@@ -12,8 +12,9 @@ import pandas as pd
 import numpy as np
 import urllib3
 import logging
+import warnings
 
-
+warnings.filterwarnings("ignore", category=FutureWarning, message=".*use `_get_tags` and `_more_tags`.*")
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
