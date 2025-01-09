@@ -81,7 +81,9 @@ MLFLOW_ADMIN_PASSWORD=your_mlflow_admin_password   # MLflow admin password in se
 
    3. Fill in the `.env` file with your actual configuration values for MinIO, PostgreSQL, and MLflow as described above.
 
-   4. Run Docker Compose to start the services:
+   4. Setup the certificate in ./certs folder (you can use certgen that provided there or you can use your own certificate)
+   
+   5. Run Docker Compose to start the services:
       ```bash
       docker-compose up --build
       ```
